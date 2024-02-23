@@ -3,6 +3,8 @@ import Root from './Root';
 import Chat from './Chat';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
+import LandingPage from './LandingPage';
+
 import {
   Login,
   Registration,
@@ -33,6 +35,10 @@ export const router = createBrowserRouter([
     element: <ResetPassword />,
   },
   {
+    path: 'welcome',
+    element: <LandingPage />,
+  },
+  {
     element: <AuthLayout />,
     children: [
       {
@@ -47,6 +53,7 @@ export const router = createBrowserRouter([
             index: true,
             element: <Navigate to="/c/new" replace={true} />,
           },
+
           {
             path: 'c/:conversationId?',
             element: <ChatRoute />,
