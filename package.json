@@ -85,6 +85,7 @@
     "husky": "^8.0.0",
     "jest": "^29.5.0",
     "lint-staged": "^13.2.2",
+    "nodemon": "^3.0.3",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
     "prettier-eslint-cli": "^7.1.0",
@@ -98,5 +99,8 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "mongodb": "^5.9.2"
   }
 }
