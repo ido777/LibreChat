@@ -3,6 +3,15 @@
 // file deepcode ignore HardcodedNonCryptoSecret: No hardcoded secrets present in this file
 
 export default {
+  com_steps_welcome_header: 'Welcome to Expertise Cracker!',
+  com_steps_welcome_instructions:
+    'The best way to start is using things you already have. Please upload your CV and provide your LinkedIn profile link below.',
+  com_steps_welcome_cv_upload_label: 'cvUpload',
+  com_steps_welcome_cv_upload_required: 'CV is required',
+  com_steps_welcome_linkedin_label: 'linkedInProfile',
+  com_steps_welcome_linkedin_required: 'LinkedIn profile is required',
+  com_steps_welcome_linkedin_invalid: 'LinkedIn profile is invalid or unaccessible',
+
   com_sidepanel_select_assistant: 'Select an Assistant',
   com_sidepanel_assistant_builder: 'Assistant Builder',
   com_sidepanel_attach_files: 'Attach Files',

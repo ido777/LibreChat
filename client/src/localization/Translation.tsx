@@ -21,7 +21,7 @@ import Hebrew from './languages/He';
 // === import additional language files here === //
 
 const languageMap: { [key: string]: unknown } = {
-  'he-HE': Hebrew, 
+  'he-HE': Hebrew,
   'en-US': English,
   'ar-EG': Arabic,
   'zh-CN': Chinese,

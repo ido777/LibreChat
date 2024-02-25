@@ -8,6 +8,15 @@ export default {
   // קובץ קוד עמוק התעלם מ-NoHardcodedPasswords: אין ערכים מקודדים בקובץ זה
   // קובץ קוד עמוק התעלם HardcodedNonCryptoSecret: אין סודות מקודדים בקובץ זה
 
+  com_steps_welcome_header: 'ברוך הבא ל- מפצח המומחיות',
+  com_steps_welcome_instructions:
+    'הדרך הטובה ביותר להתחיל היא להשתמש בדברים שכבר יש לך. אנא העלה את הקורות החיים שלך וספק את קישור פרופיל ה-LinkedIn שלך ל.',
+  com_steps_welcome_cv_upload_label: 'העלאת CV',
+  com_steps_welcome_cv_upload_required: 'דרושים קורות חיים',
+  com_steps_welcome_linkedin_label: 'פרופיל LinkedIn',
+  com_steps_welcome_linkedin_required: 'נדרש פרופיל LinkedIn',
+  com_steps_welcome_linkedin_invalid: 'פרופיל LinkedIn אינו תקף או לא נגיש',
+
   com_sidepanel_select_assistant: 'בחר עוזר',
   com_sidepanel_assistant_builder: 'בניית עוזר',
   com_sidepanel_attach_files: 'צרף קבצים',
