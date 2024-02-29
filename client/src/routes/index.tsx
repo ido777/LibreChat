@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import Root from './Root';
 import Chat from './Chat';
+import Crack from './Crack';
 import ChatRoute from './ChatRoute';
 import Search from './Search';
 import LandingPage from './LandingPage';
@@ -52,6 +53,11 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <Navigate to="/c/new" replace={true} />,
+          },
+
+          {
+            path: 'crack/:conversationId?',
+            element: <Crack />,
           },
 
           {

@@ -12,6 +12,16 @@ export default {
   com_steps_welcome_linkedin_required: 'LinkedIn profile is required',
   com_steps_welcome_linkedin_invalid: 'LinkedIn profile is invalid or unaccessible',
 
+  com_ui_crack_steps: 'Crack Steps',
+  com_ui_crack_example_read_my_cv: 'Get to know me with my CV and LinkedIn profile',
+  com_ui_crack_example_domain_expertise: 'Help me crack my Domain expertise',
+  com_ui_crack_example_ideal_customer: 'What is my ideal customer?',
+
+  com_ui_crack_capabilities: 'Capabilities',
+  com_ui_crack_capability_ask: 'Ask questions to help user define his plan',
+  com_ui_crack_capability_reflect: 'Reflect on user\'s plan',
+  com_ui_crack_capability_suggest: 'Suggest ideas to improve users\'s plan',
+
   com_sidepanel_select_assistant: 'Select an Assistant',
   com_sidepanel_assistant_builder: 'Assistant Builder',
   com_sidepanel_attach_files: 'Attach Files',
