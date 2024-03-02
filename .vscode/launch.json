@@ -1,0 +1,58 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Backend",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
+      "program": "${workspaceFolder}/api/server/index.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Debug Frontend",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3080",
+      "webRoot": "${workspaceFolder}/client",
+      "sourceMaps": true,
+      "breakOnLoad": true,
+      "skipFiles": ["node_modules/**"]
+      // "preLaunchTask": "npm: frontend:dev"
+    },
+    {
+      "name": "Attach to Chrome", // 1
+      "type": "pwa-chrome", // 2
+      "request": "attach", // 3
+      "port": 9222, // 4
+      "webRoot": "${workspaceFolder}" // 5
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Active File",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand", "${relativeFile}"],
+      "internalConsoleOptions": "neverOpen",
+      "env": { "NODE_ENV": "test" }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest All",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "env": { "NODE_ENV": "development" }
+    }
+  ]
+}

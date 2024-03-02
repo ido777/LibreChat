@@ -1,0 +1,16 @@
+{
+  "javascript.validate.enable": true,
+  "editor.formatOnSave": true,
+  "terminal.integrated.env.windows": {
+    "NODE_ENV": "development"
+  },
+  "files.autoSave": "onFocusChange",
+  // "jest.runMode": "watch",
+  "jest.runMode": "on-demand",
+  "jest.pathToJest": "npm run test:client", // Adjust if you use yarn or a different command to run tests
+  "jest.pathToConfig": "./client/jest.config.js",
+  "jest.rootPath": "./client", // Set the path to your project root
+  "jest.runAllTestsFirst": false,
+  "jest.useDashedArgs": false,
+  "jest.jestCommandLine": "../node_modules/.bin/jest" // Set to true if you want all tests to run initially
+}
