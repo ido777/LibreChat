@@ -1,6 +1,18 @@
 /* This file is automatically executed before running tests
  * https://create-react-app.dev/docs/running-tests/#initializing-test-environment
  */
+beforeAll(() => {
+  window.matchMedia = jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
+});
 
 // react-testing-library renders your components to document.body,
 // this adds jest-dom's custom assertions

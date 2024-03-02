@@ -36,7 +36,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Run Active File",
+      "name": "Jest Active File",
       "program": "${file}",
       "console": "integratedTerminal",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/jest",
