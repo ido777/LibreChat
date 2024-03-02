@@ -59,6 +59,11 @@
     "b:balance": "bun config/add-balance.js",
     "b:list-balances": "bun config/list-balances.js"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.[tj]sx?$": "babel-jest"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danny-avila/LibreChat.git"
@@ -70,6 +75,8 @@
   },
   "homepage": "https://librechat.ai/",
   "devDependencies": {
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
     "@playwright/test": "^1.38.1",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
@@ -86,7 +93,6 @@
     "husky": "^8.0.0",
     "jest": "^29.5.0",
     "lint-staged": "^13.2.2",
-    "nodemon": "^3.0.3",
     "prettier": "^2.8.8",
     "prettier-eslint": "^15.0.1",
     "prettier-eslint-cli": "^7.1.0",
@@ -100,8 +106,5 @@
       "admin/",
       "packages/"
     ]
-  },
-  "dependencies": {
-    "mongodb": "^5.9.2"
   }
 }
