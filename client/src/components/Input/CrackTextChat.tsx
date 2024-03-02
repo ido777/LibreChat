@@ -1,3 +1,4 @@
+// cloned from ./TextChat.tsx
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import React, { useEffect, useContext, useRef, useState, useCallback } from 'react';
