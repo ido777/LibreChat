@@ -19,19 +19,22 @@
       "name": "Debug Frontend",
       "type": "pwa-chrome",
       "request": "launch",
-      "url": "http://localhost:3080",
+      "url": "http://localhost:3090",
       "webRoot": "${workspaceFolder}/client",
       "sourceMaps": true,
       "breakOnLoad": true,
       "skipFiles": ["node_modules/**"]
-      // "preLaunchTask": "npm: frontend:dev"
+      // "preLaunchTask": "npm: frontend:dev" // This is commented out because it's stuck the run, you need to run it manually.
     },
     {
-      "name": "Attach to Chrome", // 1
-      "type": "pwa-chrome", // 2
-      "request": "attach", // 3
-      "port": 9222, // 4
-      "webRoot": "${workspaceFolder}" // 5
+      "name": "Attach to Chrome",
+      "type": "pwa-chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/client",
+      "sourceMaps": true,
+      "url": "http://localhost:3090",
+      "timeout": 20000
     },
     {
       "type": "node",

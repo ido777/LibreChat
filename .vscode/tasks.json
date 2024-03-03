@@ -1,19 +1,27 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "npm: frontend:dev",
-      "type": "shell",
-      "command": "npm",
-      "args": ["run", "frontend:dev"],
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always"
-      }
+  "label": "npm: frontend:dev",
+  "type": "npm",
+  "script": "frontend:dev",
+  "isBackground": true,
+  "problemMatcher": {
+    "pattern": {
+      "regexp": ".", // This is just a placeholder; modify as needed.
+      "file": 1,
+      "location": 2,
+      "message": 3
+    },
+    "background": {
+      "activeOnStart": true,
+      "beginsPattern": ".", // Regex that matches the start of the server's output.
+      "endsPattern": ".*Ready.*" // Regex that matches the line indicating the server is ready.
     }
-  ]
+  },
+  "group": {
+    "kind": "build",
+    "isDefault": true
+  },
+  "presentation": {
+    "reveal": "always",
+    "panel": "new"
+  }
 }

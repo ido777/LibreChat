@@ -118,6 +118,7 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-file-loader": "^1.0.3",
     "jest-junit": "^16.0.0",
+    "msw": "^2.2.2",
     "postcss": "^8.4.31",
     "postcss-loader": "^7.1.0",
     "postcss-preset-env": "^8.2.0",

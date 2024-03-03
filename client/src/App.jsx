@@ -10,6 +10,14 @@ import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
 import { router } from './routes';
 
+// if (process.env.NODE_ENV === 'development') {
+//   import('../mocks/browser')
+//     .then(({ worker }) => {
+//       worker.start();
+//     })
+//     .catch((err) => console.error('MSW initialization error:', err));
+// }
+
 const App = () => {
   const { setError } = useApiErrorBoundary();
 
