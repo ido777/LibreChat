@@ -13,6 +13,7 @@ import NavToggle from '~/components/Nav/NavToggle';
 import PanelSwitch from './Builder/PanelSwitch';
 import FilesPanel from './Files/Panel';
 import Switcher from './Switcher';
+import Instructions from './Instructions';
 import { cn } from '~/utils';
 import Nav from './Nav';
 
@@ -113,6 +114,19 @@ export default function SidePanel({
   const assistants = endpointsConfig?.[EModelEndpoint.assistants];
   const userProvidesKey = !!assistants?.userProvide;
   const keyProvided = userProvidesKey ? !!keyExpiry?.expiresAt : true;
+  const [content, setContent] = useState([]);
+
+  useEffect(() => {
+    fetch('/steps/expert.html') // Adjust the path if your JSON is located elsewhere
+      .then((response) => response.json())
+      .then((data) => setContent(data))
+      .catch((error) => console.error('Error fetching steps:', error));
+  }, []);
+
+  // const steps = [
+  //   { title: 'Attach Files', content: 'This is how you attach files.' },
+  //   { title: 'Add Recipients', content: 'This is how you add recipients.' },
+  // ];
 
   return (
     <>
@@ -188,13 +202,13 @@ export default function SidePanel({
                 <Separator className="bg-gray-100/50" />
               </div>
             )}
-
             <Nav
               resize={panelRef.current?.resize}
               isCollapsed={isCollapsed}
               defaultActive={defaultActive}
               links={Links}
             />
+            <Instructions htmlInstructions={content} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>
