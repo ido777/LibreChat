@@ -114,12 +114,13 @@ export default function SidePanel({
   const assistants = endpointsConfig?.[EModelEndpoint.assistants];
   const userProvidesKey = !!assistants?.userProvide;
   const keyProvided = userProvidesKey ? !!keyExpiry?.expiresAt : true;
-  const [content, setContent] = useState([]);
+
+  const [content, setContent] = useState('');
 
   useEffect(() => {
-    fetch('/steps/expert.html') // Adjust the path if your JSON is located elsewhere
-      .then((response) => response.json())
-      .then((data) => setContent(data))
+    fetch('/steps/expert.html') // Change the file extension to .html
+      .then((response) => response.text()) // Change from response.json() to response.text()
+      .then((content) => setContent(content)) // Set the HTML content
       .catch((error) => console.error('Error fetching steps:', error));
   }, []);
 
