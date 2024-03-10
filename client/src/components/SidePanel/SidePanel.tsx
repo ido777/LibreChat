@@ -118,16 +118,28 @@ export default function SidePanel({
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    fetch('/steps/expert.html') // Change the file extension to .html
-      .then((response) => response.text()) // Change from response.json() to response.text()
-      .then((content) => setContent(content)) // Set the HTML content
-      .catch((error) => console.error('Error fetching steps:', error));
-  }, []);
-
-  // const steps = [
-  //   { title: 'Attach Files', content: 'This is how you attach files.' },
-  //   { title: 'Add Recipients', content: 'This is how you add recipients.' },
-  // ];
+    console.log('Starting fetch for /steps/expert.html');
+    fetch('/steps/expert.html')
+      .then((response) => {
+        if (!response.ok) {
+          // If the response is not OK, throw an error including the status
+          throw new Error(`Error: File not found, status ${response.status}`);
+        }
+        return response.text(); // Assuming you want the content as text
+      })
+      .then((content) => {
+        if (!content) {
+          console.error('Error: File is empty');
+        } else {
+          console.log('File content:', content);
+        }
+        setContent(content);
+      })
+      .catch((error) => {
+        // This will catch any network error and any error thrown from the then block
+        console.error('Error fetching steps:', error);
+      });
+  }, []); // Dependency array is empty, so this effect runs only once after the initial render
 
   return (
     <>
