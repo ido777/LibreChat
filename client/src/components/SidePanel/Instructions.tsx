@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
 
-const DEFAULT_DIRECTION = 'rtl';
+const DEFAULT_DIRECTION: 'rtl' | 'ltr' = 'rtl';
+
+interface StepType {
+  title: string;
+  content: string;
+  direction: 'ltr' | 'rtl';
+}
+
+interface InstructionType {
+  title: string;
+  direction: 'ltr' | 'rtl';
+  steps: StepType[];
+}
 
 const Instructions = ({ htmlInstructions }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [parsedInstructions, setParsedInstructions] = useState(null);
+  const [parsedInstructions, setParsedInstructions] = useState<InstructionType | null>(null);
 
   useEffect(() => {
     const parser = new DOMParser();
@@ -24,7 +36,10 @@ const Instructions = ({ htmlInstructions }) => {
   }
 
   const { title, steps, direction } = parsedInstructions;
-  const titleStyle = { direction, textAlign: direction === 'rtl' ? 'right' : 'left' };
+  const titleStyle: React.CSSProperties = {
+    direction: direction,
+    textAlign: direction === 'rtl' ? 'right' : 'left',
+  };
 
   return (
     <div>
