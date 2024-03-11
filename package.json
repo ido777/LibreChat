@@ -8,6 +8,18 @@
     "packages/*"
   ],
   "scripts": {
+    "_comment0": "This is a comment, the following section is the new command format",
+    "api:test": "cd api && cross-env NODE_ENV=test jest",
+    "api:b:test": "cd api && NODE_ENV=test bun jest",
+    "api:test:ci": "cd api && jest --ci",
+    "client:data-provider": "npm run build:data-provider",
+    "client:build": "cd client && cross-env NODE_ENV=production vite build",
+    "client:build:ci": "cd client && cross-env NODE_ENV=development vite build --mode ci",
+    "client:dev": "cd client && cross-env NODE_ENV=development vite",
+    "client:preview-prod": "cd client && cross-env NODE_ENV=development vite preview",
+    "client:test": "cd client && cross-env NODE_ENV=development jest --watch",
+    "client:test:ci": "cd client && cross-env NODE_ENV=development jest --ci",
+    "_comment1": "This is a comment, the following section is the old command format left for backwards compatibility",
     "update": "node config/update.js",
     "add-balance": "node config/add-balance.js",
     "list-balances": "node config/list-balances.js",
@@ -25,7 +37,6 @@
     "stop:deployed": "docker-compose -f ./deploy-compose.yml down",
     "upgrade": "node config/upgrade.js",
     "create-user": "node config/create-user.js",
-    "ban-user": "node config/ban-user.js",
     "delete-user": "node config/delete-user.js",
     "backend": "cross-env NODE_ENV=production node api/server/index.js",
     "backend:dev": "cross-env NODE_ENV=development npx nodemon api/server/index.js",
@@ -48,6 +59,8 @@
     "lint:fix": "eslint --fix \"{,!(node_modules)/**/}*.{js,jsx,ts,tsx}\"",
     "lint": "eslint \"{,!(node_modules)/**/}*.{js,jsx,ts,tsx}\"",
     "format": "prettier-eslint --write \"{,!(node_modules)/**/}*.{js,jsx,ts,tsx}\"",
+    "_comment2": "This is a comment, the following section is bun commands",
+    "ban-user": "node config/ban-user.js",
     "b:api": "NODE_ENV=production bun run api/server/index.js",
     "b:api-inspect": "NODE_ENV=production bun --inspect run api/server/index.js",
     "b:api:dev": "NODE_ENV=production bun run --watch api/server/index.js",
@@ -57,7 +70,10 @@
     "b:test:client": "cd client && bun run b:test",
     "b:test:api": "cd api && bun run b:test",
     "b:balance": "bun config/add-balance.js",
-    "b:list-balances": "bun config/list-balances.js"
+    "b:list-balances": "bun config/list-balances.js",
+    "client:b:test": "cd client && NODE_ENV=test bunx jest --watch",
+    "client:b:build": "cd client && NODE_ENV=production bun --bun vite build",
+    "client:b:dev": "cd client && NODE_ENV=development bunx vite"
   },
   "repository": {
     "type": "git",
