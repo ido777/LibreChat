@@ -3,7 +3,7 @@
   "version": "0.6.10",
   "description": "",
   "scripts": {
-    "start": "echo 'please run this from the root directory'",
+    "start": "npx nodemon server/index.js",
     "server-dev": "echo 'please run this from the root directory'",
     "test": "cross-env NODE_ENV=test jest",
     "b:test": "NODE_ENV=test bun jest",

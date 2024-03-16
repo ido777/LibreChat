@@ -1,0 +1,21 @@
+# Start from a base Node image
+FROM node:20-alpine
+
+# Set the working directory in the container
+WORKDIR /app/api
+
+# Only copy package.json and package-lock.json (or yarn.lock if using Yarn) to install dependencies
+COPY ./api/package*.json ./
+
+# Install API dependencies
+RUN npm install
+
+# No need to copy the rest of the API's source code since we're mounting it as a volume
+
+# Expose the port the API runs on
+EXPOSE 3080
+
+RUN echo "API working at" $PWD
+
+# Command to run your API
+CMD ["npm", "start"]

@@ -1,30 +1,29 @@
-# Base node image
-FROM node:18-alpine AS node
+# Base image with Node.js
+FROM node:18-alpine AS base
 
-COPY . /app
+# Set working directory
 WORKDIR /app
 
-# Allow mounting of these files, which have no default
-# values.
-RUN touch .env
-RUN npm config set fetch-retry-maxtimeout 300000
-RUN apk add --no-cache g++ make python3 py3-pip
-RUN npm install -g node-gyp
-RUN apk --no-cache add curl && \
-    npm install
+RUN npm config set fetch-retry-maxtimeout 300000 \
+    && apk add --no-cache g++ make python3 py3-pip curl\
+    && npm install -g node-gyp rollup
 
-# React client build
-ENV NODE_OPTIONS="--max-old-space-size=2048"
+# Copy package files and install dependencies
+COPY package*.json ./
+COPY client/package*.json ./client/
+COPY ./api/package*.json ./api/
+COPY config/ /app/config/
+
+RUN npm install
+
+# Builder stage to build the frontend
+FROM base AS builder
+COPY . .
 RUN npm run frontend
 
-# Node API setup
+# Final stage to prepare the runtime image
+FROM base AS final
+COPY --from=builder /app .
 EXPOSE 3080
 ENV HOST=0.0.0.0
 CMD ["npm", "run", "backend"]
-
-# Optional: for client with nginx routing
-# FROM nginx:stable-alpine AS nginx-client
-# WORKDIR /usr/share/nginx/html
-# COPY --from=node /app/client/dist /usr/share/nginx/html
-# COPY client/nginx.conf /etc/nginx/conf.d/default.conf
-# ENTRYPOINT ["nginx", "-g", "daemon off;"]

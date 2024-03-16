@@ -1,0 +1,18 @@
+# Start from a base Node image
+FROM node:20-alpine
+
+# Set the working directory in the container
+WORKDIR /app/client
+# Only copy package.json and package-lock.json (or yarn.lock if using Yarn) to install dependencies
+COPY ./client/package*.json  ./
+
+# Install client  dependencies
+RUN npm install
+
+# No need to copy the rest of the API's source code since we're mounting it as a volume
+EXPOSE 3090
+
+RUN echo "Client working at" $PWD
+
+# For development, we start the React development server
+CMD ["npm", "start"]

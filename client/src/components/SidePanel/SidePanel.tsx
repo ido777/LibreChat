@@ -13,6 +13,7 @@ import NavToggle from '~/components/Nav/NavToggle';
 import PanelSwitch from './Builder/PanelSwitch';
 import FilesPanel from './Files/Panel';
 import Switcher from './Switcher';
+import Instructions from './Instructions';
 import { cn } from '~/utils';
 import Nav from './Nav';
 
@@ -114,6 +115,32 @@ export default function SidePanel({
   const userProvidesKey = !!assistants?.userProvide;
   const keyProvided = userProvidesKey ? !!keyExpiry?.expiresAt : true;
 
+  const [content, setContent] = useState('');
+
+  useEffect(() => {
+    console.log('Starting fetch for /steps/expert.html');
+    fetch('/steps/expert.html')
+      .then((response) => {
+        if (!response.ok) {
+          // If the response is not OK, throw an error including the status
+          throw new Error(`Error: File not found, status ${response.status}`);
+        }
+        return response.text(); // Assuming you want the content as text
+      })
+      .then((content) => {
+        if (!content) {
+          console.error('Error: File is empty');
+        } else {
+          console.log('File content:', content);
+        }
+        setContent(content);
+      })
+      .catch((error) => {
+        // This will catch any network error and any error thrown from the then block
+        console.error('Error fetching steps:', error);
+      });
+  }, []); // Dependency array is empty, so this effect runs only once after the initial render
+
   return (
     <>
       <TooltipProvider delayDuration={0}>
@@ -188,13 +215,13 @@ export default function SidePanel({
                 <Separator className="bg-gray-100/50 dark:bg-gray-600" />
               </div>
             )}
-
             <Nav
               resize={panelRef.current?.resize}
               isCollapsed={isCollapsed}
               defaultActive={defaultActive}
               links={Links}
             />
+            <Instructions htmlInstructions={content} />
           </ResizablePanel>
         </ResizablePanelGroup>
       </TooltipProvider>

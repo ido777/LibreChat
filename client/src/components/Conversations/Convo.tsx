@@ -52,7 +52,7 @@ export default function Conversation({ conversation, retainView, toggleNav, isLa
       try {
         lastSelectedTools = JSON.parse(localStorage.getItem('lastSelectedTools') ?? '') ?? [];
       } catch (e) {
-      // console.error(e);
+        // console.error(e);
       }
       navigateToConvo({ ...conversation, tools: lastSelectedTools });
     } else {
