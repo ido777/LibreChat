@@ -1,0 +1,83 @@
+version: '3.8'
+services:
+  data-provider:
+    build:
+      context: .
+      dockerfile: Dockerfile.data-provider
+      tags:
+        - librechat-data-provider-dev:latest
+        # - librechat-data-provider-dev:1.0.0          
+    volumes:
+      - ./packages/data-provider:/app/packages/data-provider
+
+  client:
+    container_name: LibreChat-Client
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+      # Specify the tag for the image
+      tags:
+        - librechat-client-dev:latest
+        # - librechat-client-dev:1.0.0      
+    volumes:
+      - ./client:/app/client
+      - /app/client/node_modules
+    ports:
+      - "3090:3090"
+    depends_on:
+      - api    
+    restart: always
+    environment:
+      - NODE_ENV=development
+
+  api:
+    container_name: LibreChat-Api 
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      tags:
+        - librechat-api-dev:latest
+        # - librechat-api-dev:1.0.0         
+    volumes:
+      - ./api:/app/api
+      - ./client/dist:/app/client/dist/
+      - /app/api/node_modules
+      - ./images:/app/client/public/images
+      - ./librechat.yaml:/app/librechat.yaml      
+    ports:
+      - "3080:3080"
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - MEILI_HOST=http://meilisearch:7700      
+    depends_on:
+      - mongodb
+    restart: always
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+
+
+  mongodb:
+    container_name: chat-mongodb
+    # ports:  # Uncomment this to access mongodb from outside docker, not safe in deployment
+    #   - 27018:27017
+    image: mongo
+    restart: always
+    volumes:
+      - ./data-node:/data/db
+    command: mongod --noauth
+  meilisearch:
+    container_name: chat-meilisearch
+    image: getmeili/meilisearch:v1.0
+    # ports: # Uncomment this to access meilisearch from outside docker
+    #   - 7700:7700 # if exposing these ports, make sure your master key is not the default value
+    env_file:
+      - .env
+    environment:
+      - MEILI_HOST=http://meilisearch:7700
+      - MEILI_NO_ANALYTICS=true
+    volumes:
+      - ./meili_data:/meili_data

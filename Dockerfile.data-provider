@@ -1,0 +1,6 @@
+FROM node:20-alpine AS data-provider-build
+WORKDIR /app/packages/data-provider
+COPY ./packages/data-provider/package.json ./
+RUN npm install
+COPY ./packages/data-provider ./
+RUN npm run build

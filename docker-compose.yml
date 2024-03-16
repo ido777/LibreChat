@@ -40,6 +40,8 @@ services:
     container_name: chat-meilisearch
     image: getmeili/meilisearch:v1.7.3
     restart: always
+    env_file:
+      - .env    
     user: "${UID}:${GID}"
     environment:
       - MEILI_HOST=http://meilisearch:7700
