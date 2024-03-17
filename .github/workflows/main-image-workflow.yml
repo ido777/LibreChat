@@ -28,7 +28,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.LIBRECHAT_PAT_TOKEN  }}
 
       # Docker metadata for librechat
       - name: Docker metadata for librechat
