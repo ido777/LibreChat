@@ -1,13 +1,14 @@
 version: "3.8"
 services:
   api:
+    image: "${IMAGE_OR_BUILD}"      # Update this values in the .env file (see .env.example)
     build:
       context: .
       dockerfile: Dockerfile
       target: node
     container_name: LibreChat
     labels:
-      - "com.librechat.description=Libre-Prod Api"    
+      - "com.librechat.description=Libre-Prod"    
     ports:
       - 3080:3080
     depends_on:
@@ -25,24 +26,6 @@ services:
     volumes:
       - ./images:/app/client/public/images
       - ./librechat.yaml:/app/librechat.yaml
-  # client:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.multi
-  #     target: client-build
-  #   container_name: LibreChat-Client
-  #   labels:
-  #     - "com.librechat.description=Libre-Prod Client"     
-  #   ports:
-  #     - 80:80
-  #     # - 443:443
-  #   depends_on:
-  #     - api
-  #   restart: always
-  #   env_file:
-  #     - .env    
-      # stdin_open: true
-      # tty: true
 
   nginx:
     image: nginx:1.21.1-alpine
@@ -58,10 +41,10 @@ services:
     - 443:443  # Changed from 443 to 8443 if needed
     depends_on:
       - api
+    env_file:
+      - .env      
     restart: always
-    command: [nginx-debug, '-g', 'daemon off;']
-
-
+    command: [nginx, '-g', 'daemon off;']
 
   mongodb:
     container_name: chat-mongodb
@@ -69,9 +52,12 @@ services:
     #   - 27018:27017
     image: mongo
     restart: always
+    env_file:
+      - .env    
     volumes:
       - ./data-node:/data/db
     command: mongod --noauth
+
   meilisearch:
     container_name: chat-meilisearch
     image: getmeili/meilisearch:v1.0
