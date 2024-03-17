@@ -131,7 +131,7 @@ export default function SidePanel({
         if (!content) {
           console.error('Error: File is empty');
         } else {
-          console.log('File content:', content);
+          console.log('File /steps/expert.html loaded');
         }
         setContent(content);
       })
