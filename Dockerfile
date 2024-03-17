@@ -22,7 +22,7 @@ COPY . .
 RUN npm run frontend
 
 # Final stage to prepare the runtime image
-FROM base AS final
+FROM base AS node
 COPY --from=builder /app .
 EXPOSE 3080
 ENV HOST=0.0.0.0

@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: final
+      target: node
     container_name: LibreChat
     labels:
       - "com.librechat.description=Libre-Prod Api"    
