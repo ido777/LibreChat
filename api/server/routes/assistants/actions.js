@@ -74,14 +74,7 @@ router.post('/:assistant_id', async (req, res) => {
     const { actions: _actions = [] } = assistant_data ?? {};
     const actions = [];
     for (const action of _actions) {
-      const [action_domain, current_action_id] = action.split(actionDelimiter);
-      if (action_domain === domain && !_action_id) {
-        // TODO: dupe check on the frontend
-        return res.status(400).json({
-          message: `Action sets cannot have duplicate domains - ${domain} already exists on another action`,
-        });
-      }
-
+      const [_action_domain, current_action_id] = action.split(actionDelimiter);
       if (current_action_id === action_id) {
         continue;
       }
@@ -162,7 +155,7 @@ router.delete('/:assistant_id/:action_id', async (req, res) => {
     /** @type {[AssistantDocument, Assistant]} */
     const [assistant_data, assistant] = await Promise.all(initialPromises);
 
-    const { actions } = assistant_data ?? {};
+    const { actions = [] } = assistant_data ?? {};
     const { tools = [] } = assistant ?? {};
 
     let domain = '';
