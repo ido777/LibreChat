@@ -4,9 +4,8 @@ import { useGetEndpointsQuery, useGetStartupConfig } from 'librechat-data-provid
 import type { ReactNode } from 'react';
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '~/components/ui';
 import { useChatContext, useAssistantsMapContext } from '~/Providers';
-import { BirthdayIcon } from '~/components/svg';
 import { getEndpointField } from '~/utils';
-import { useLocalize } from '~/hooks';
+import { useSetIndexOptions, useSelectAssistant, useLocalize } from '~/hooks';
 import { cn } from '~/utils';
 
 const DEFAULT_DIRECTION: 'rtl' | 'ltr' = 'rtl';
@@ -23,6 +22,15 @@ interface InstructionType {
   steps: StepType[];
 }
 
+type ExpertStepsType = {
+  title: string;
+  steps: Array<{
+    index: string;
+    header: string;
+    assistant: string;
+  }>;
+};
+
 const Instructions = ({ htmlInstructions }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [parsedInstructions, setParsedInstructions] = useState<InstructionType | null>(null);
@@ -32,15 +40,15 @@ const Instructions = ({ htmlInstructions }) => {
   const assistantMap = useAssistantsMapContext();
   const localize = useLocalize();
 
-  const [expertSteps, setExpertSteps] = useState(null);
+  const [expertSteps, setExpertSteps] = useState<ExpertStepsType | null>(null);
+  const { onSelect } = useSelectAssistant();
 
   useEffect(() => {
-    fetch('/steps/expert.json') // Adjust the path as necessary. Typically something like '/steps/expert.json' if in public directory
+    fetch('/steps/expert.json') // Adjust the path as necessary
       .then((response) => response.json())
-      .then((data) => {
+      .then((data: ExpertStepsType) => {
+        // Here we are asserting that 'data' is of type 'ExpertStepsType'
         setExpertSteps(data);
-        console.log('This is the assistantMap :', assistantMap);
-        console.log(data); // For testing to see the fetched data
       })
       .catch((error) => console.error('Error fetching expert steps:', error));
   }, []);
@@ -93,9 +101,9 @@ const Instructions = ({ htmlInstructions }) => {
         className={cn(
           'flex items-center justify-center rounded-md border border-transparent px-4 py-2',
           'text-base font-medium transition duration-150 ease-in-out',
-          'hover:bg-gray-200 dark:hover:bg-gray-700', // Matching the Attach Files hover state
-          'cursor-pointer select-none', // Add more classes as needed to match the Attach Files style
-          isVisible ? 'bg-white dark:bg-gray-900' : '', // Adjust based on visibility
+          'hover:bg-gray-200 dark:hover:bg-gray-700',
+          'cursor-pointer select-none',
+          isVisible ? 'bg-white dark:bg-gray-900' : '',
         )}
         style={titleStyle}
       >
@@ -108,7 +116,34 @@ const Instructions = ({ htmlInstructions }) => {
           {parsedInstructions.steps.map((step, index) => (
             <div key={index} className="mb-5">
               <button
-                onClick={() => setCurrentStepIndex(index)}
+                onClick={() => {
+                  setCurrentStepIndex(index);
+                  if (expertSteps && expertSteps.steps) {
+                    const assistantNameFromStep = expertSteps.steps
+                      .find((s) => s.index === String(index + 1))
+                      ?.assistant.trim();
+                    if (assistantNameFromStep) {
+                      const assistantId = Object.keys(assistantMap).find(
+                        (key) => assistantMap[key].name.trim() === assistantNameFromStep,
+                      );
+                      if (assistantId) {
+                        onSelect(assistantId); // This uses the ID to switch the assistant
+                      } else {
+                        // Prepare a string of all assistant names in the map for the error message, trimmed for any leading or trailing spaces
+                        const allAssistantNames = Object.values(assistantMap)
+                          .map((assistant) => assistant.name.trim())
+                          .join(', ');
+                        console.error(
+                          `Assistant name "${assistantNameFromStep}" not found in assistantMap. Available assistant names are: ${allAssistantNames}`,
+                        );
+                      }
+                    } else {
+                      console.error('Step not found in expertSteps');
+                    }
+                  } else {
+                    console.error('expertSteps is null or not loaded');
+                  }
+                }}
                 className={cn(
                   'flex w-full items-center justify-start rounded-md border border-transparent px-4 py-2 text-left',
                   'font-medium transition duration-150 ease-in-out',
@@ -136,62 +171,3 @@ const Instructions = ({ htmlInstructions }) => {
 };
 
 export default Instructions;
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       {' '}
-//       {/* Ensure the container centers its children */}
-//       <button
-//         onClick={toggleVisibility}
-//         className={cn(
-//           'my-4', // Adds margin to the top and bottom for spacing
-//           'px-6 py-2', // Adjust padding as needed
-//           'rounded-md border border-transparent',
-//           'text-base font-medium transition duration-150 ease-in-out',
-//           'hover:bg-gray-200 dark:hover:bg-gray-700',
-//           'cursor-pointer select-none',
-//           isVisible ? 'bg-white dark:bg-gray-900' : '',
-//         )}
-//         style={{ direction, width: 'fit-content' }} // Use 'fit-content' to size button width based on its content
-//       >
-//         Instructions {isVisible ? '-' : '+'}
-//       </button>
-//       {isVisible && (
-//         <div className="w-full">
-//           {' '}
-//           {/* Ensure the steps container takes the full width */}
-//           {parsedInstructions.steps.map((step, index) => (
-//             <div key={index} className="mb-5">
-//               <button
-//                 onClick={() => setCurrentStepIndex(index === currentStepIndex ? null : index)}
-//                 className={cn(
-//                   'flex w-full items-center justify-start px-4 py-2',
-//                   'text-left font-medium transition duration-150 ease-in-out',
-//                   'cursor-pointer select-none',
-//                   'rounded-md border border-transparent',
-//                   currentStepIndex === index
-//                     ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-//                     : 'bg-white hover:bg-gray-200 dark:bg-gray-900 dark:text-white',
-//                 )}
-//                 style={{ direction }}
-//               >
-//                 {step.title} {currentStepIndex === index ? '-' : '+'}
-//               </button>
-//               {currentStepIndex === index && (
-//                 <div
-//                   dangerouslySetInnerHTML={{ __html: step.content }}
-//                   style={{
-//                     border: '1px solid gray',
-//                     padding: '10px',
-//                     direction,
-//                     textAlign: direction === 'rtl' ? 'right' : 'left',
-//                   }}
-//                 />
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
