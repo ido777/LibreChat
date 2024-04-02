@@ -1,53 +1,48 @@
-# v0.7.1
+# v0.7.1 Optimized Dockerfile
 
 # Base node image
-FROM node:18-alpine3.18 AS node
+FROM node:18-alpine3.18 AS base
 
-# Set working directory
-WORKDIR /app
+# Install system dependencies
+RUN apk add --no-cache g++ make python3 py3-pip curl
 
-RUN npm config set fetch-retry-maxtimeout 300000 \
-    && apk add --no-cache g++ make python3 py3-pip curl\
+# Set npm configurations
+RUN npm config set fetch-retry-maxtimeout 600000 \
+    && npm config set fetch-retries 5 \
+    && npm config set fetch-retry-mintimeout 15000 \
     && npm install -g node-gyp rollup
 
-RUN mkdir -p /app && chown node:node /app
+# Set working directory and permissions
+WORKDIR /app
+RUN mkdir -p /app/client/public/images /app/api/logs && \
+    chown -R node:node /app
 
 USER node
 
-COPY --chown=node:node . .
+# Optimizing for caching by copying package.json files first
+COPY --chown=node:node package*.json ./
+COPY --chown=node:node client/package*.json ./client/
+COPY --chown=node:node api/package*.json ./api/
+COPY --chown=node:node config/* ./config/
 
-# Allow mounting of these files, which have no default
-# values.
-RUN touch .env
-RUN npm config set fetch-retry-maxtimeout 600000
-RUN npm config set fetch-retries 5
-RUN npm config set fetch-retry-mintimeout 15000
+# Install dependencies
 RUN npm install --no-audit
 
+# Copy the rest of the application code
+COPY --chown=node:node . .
+
+# Allow mounting of .env file, which has no default values
+RUN touch .env
+
+# Set environment variables
+ENV NODE_OPTIONS="--max-old-space-size=2048" \
+    HOST=0.0.0.0
+
 # React client build
-ENV NODE_OPTIONS="--max-old-space-size=2048"
-
-# Copy package files and install dependencies
-COPY package*.json ./
-COPY client/package*.json ./client/
-COPY ./api/package*.json ./api/
-COPY config/ /app/config/
-
-RUN npm install
-
-# Builder stage to build the frontend
-FROM base AS builder
-COPY . .
 RUN npm run frontend
 
-# Create directories for the volumes to inherit
-# the correct permissions
-RUN mkdir -p /app/client/public/images /app/api/logs
-
-
-# Final stage to prepare the runtime image
-FROM base AS node
-COPY --from=builder /app .
+# Expose the port the app runs on
 EXPOSE 3080
-ENV HOST=0.0.0.0
+
+# Command to run the backend
 CMD ["npm", "run", "backend"]
