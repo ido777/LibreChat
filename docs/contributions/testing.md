@@ -6,75 +6,20 @@ weight: -6
 
 # Locally test the app during development
 
-## WIP
+## Local Unit Tests
 
-## Run the tests
+Before submitting your updates, it’s crucial to verify they pass all unit tests. Follow these steps to run tests locally:
 
-#### 1. Install the global dependencies
+- copy your `.env.example` file in the `/api` folder and rename it to `.env`
 
-> Comment: You don't need to run it every time only the first time ever or after changing the dependencies.
-
-```shell
-npm ci
+```bash
+cp .env.example ./api/.env
 ```
 
-#### 2. Run Backend unit tests
+- add `NODE_ENV=CI` to your `/api/.env` file
+- `npm run test:client`
+- `npm run test:api`
 
-- Install data provider
-
-```shell
-npm run build:data-provider
-```
-
-- Run backend unit tests
-
-```shell
-cd api && npm run test:ci
-```
-
-- Run librechat-data-provider unit tests
-
-```shell
-cd packages/data-provider && npm run test:ci
-```
-
-#### 3. Run frontend unit tests
-
-- Build Client
-
-```shell
-npm npm run frontend:ci
-```
-
-- Run frontend unit tests
-
-```shell
-npm run test:ci --verbose
-```
-
-#### 4. Run e2e tests
-
-- Install Playwright
-
-```shell
-npx playwright install --with-deps
-npx playwright install chromium
-```
-
-- Run Playwright tests
-
-```shell
-npm run e2e:ci
-```
-
-- View results
-
-```shell
-ls e2e/playwright-report/
-```
-
-cd api && npm run test:ci
-
-If everything goes well, you should see a `passed` message.
-
-![testing-1](https://github.com/danny-avila/LibreChat/assets/32828263/35b5c6a8-5c76-4e76-8ad9-2b1977eabc2a)
+!!! failure "Warning"
+When executed locally, this API unit test is expected to fail. This should be the only error encountered.
+![image](https://github.com/danny-avila/LibreChat/assets/32828263/d222034c-9c3a-4764-b972-39e954c92170)

@@ -1,6 +1,7 @@
 const {
   Constants,
   FileSources,
+  Capabilities,
   EModelEndpoint,
   defaultSocialLogins,
   validateAzureGroups,
@@ -122,6 +123,13 @@ const AppService = async (app) => {
         );
       }
     });
+
+    if (azureConfiguration.assistants) {
+      endpointLocals[EModelEndpoint.assistants] = {
+        // Note: may need to add retrieval models here in the future
+        capabilities: [Capabilities.tools, Capabilities.actions, Capabilities.code_interpreter],
+      };
+    }
   }
 
   if (config?.endpoints?.[EModelEndpoint.assistants]) {
@@ -133,8 +141,11 @@ const AppService = async (app) => {
       );
     }
 
+    const prevConfig = endpointLocals[EModelEndpoint.assistants] ?? {};
+
     /** @type {Partial<TAssistantEndpoint>} */
     endpointLocals[EModelEndpoint.assistants] = {
+      ...prevConfig,
       retrievalModels: parsedConfig.retrievalModels,
       disableBuilder: parsedConfig.disableBuilder,
       pollIntervalMs: parsedConfig.pollIntervalMs,
@@ -143,6 +154,17 @@ const AppService = async (app) => {
       excludedIds: parsedConfig.excludedIds,
       timeoutMs: parsedConfig.timeoutMs,
     };
+  }
+
+  try {
+    const response = await fetch(`${process.env.RAG_API_URL}/health`);
+    if (response?.ok && response?.status === 200) {
+      logger.info(`RAG API is running and reachable at ${process.env.RAG_API_URL}.`);
+    }
+  } catch (error) {
+    logger.warn(
+      `RAG API is either not running or not reachable at ${process.env.RAG_API_URL}, you may experience errors with file uploads.`,
+    );
   }
 
   app.locals = {
