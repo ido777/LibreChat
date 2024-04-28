@@ -27,7 +27,7 @@ const initializeFunctionsAgent = async ({
   const prefix = addToolDescriptions(`Current Date: ${currentDateString}\n${PREFIX}`, tools);
 
   return await initializeAgentExecutorWithOptions(tools, model, {
-    agentType: 'openai-functions',
+    agentType: 'chat-conversational-react-description', // 'openai-functions',
     memory,
     ...rest,
     agentArgs: {

@@ -6,6 +6,8 @@ meili_data*
 data/
 logs
 *.log
+*.bak
+
 
 # Runtime data
 pids
@@ -17,7 +19,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
-
+coverage2
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 

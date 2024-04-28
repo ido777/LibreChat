@@ -6,9 +6,76 @@ const {
 const { getUserKeyValues, checkUserKeyExpiry } = require('~/server/services/UserService');
 const { isEnabled, isUserProvided } = require('~/server/utils');
 const { getAzureCredentials } = require('~/utils');
-const { PluginsClient } = require('~/app');
+const { PluginsClient, AnthropicPluginsClient } = require('~/app');
 
 const initializeClient = async ({ req, res, endpointOption }) => {
+  const modelName = endpointOption.modelOptions.model;
+  // TODO: check why we need to models to endpointOption
+  endpointOption.agentOptions.model = endpointOption.modelOptions.model;
+  // Determine the model family based on the model name or other logic
+  const modelFamily = determineModelFamily(modelName);
+  switch (modelFamily) {
+    case 'openai':
+      return await initializeOpenAiClient({ req, res, endpointOption });
+    case 'anthropic':
+      return await initializeAnthropicClient({ req, res, endpointOption });
+
+    default:
+      throw new Error('Unsupported model family', modelFamily);
+  }
+};
+
+const determineModelFamily = (modelName) => {
+  if (modelName.startsWith('claude-3')) {
+    return 'anthropic';
+  } else {
+    return 'openai';
+  }
+};
+
+const initializeAnthropicClient = async ({ req, res, endpointOption }) => {
+  const { ANTHROPIC_API_KEY, ANTHROPIC_SUMMARIZE, DEBUG_PLUGINS } = process.env;
+
+  const { key: expiresAt } = req.body;
+  const contextStrategy = isEnabled(ANTHROPIC_SUMMARIZE) ? 'summarize' : null;
+
+  let endpoint = EModelEndpoint.anthropic;
+
+  const credentials = {
+    [EModelEndpoint.anthropic]: ANTHROPIC_API_KEY,
+  };
+
+  const userProvidesKey = isUserProvided(credentials[endpoint]);
+
+  let userValues = null;
+  if (expiresAt && userProvidesKey) {
+    checkUserKeyExpiry(expiresAt, endpoint);
+    userValues = await getUserKeyValues({ userId: req.user.id, name: endpoint });
+  }
+
+  let apiKey = userProvidesKey ? userValues?.apiKey : credentials[endpoint];
+
+  const clientOptions = {
+    contextStrategy,
+    debug: isEnabled(DEBUG_PLUGINS),
+    proxy: null,
+    req,
+    res,
+    ...endpointOption,
+  };
+
+  if (!apiKey) {
+    throw new Error(`${endpoint} API key not provided. Please provide it again.`);
+  }
+
+  const client = new AnthropicPluginsClient(apiKey, clientOptions);
+  return {
+    client,
+    anthropicApiKey: apiKey,
+  };
+};
+
+const initializeOpenAiClient = async ({ req, res, endpointOption }) => {
   const {
     PROXY,
     OPENAI_API_KEY,
