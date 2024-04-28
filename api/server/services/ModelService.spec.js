@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { logger } = require('~/config');
+// const logger = require('~/config');
 const config = require('~/config');
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const {
@@ -353,7 +353,7 @@ describe('ModelService', () => {
       });
 
       expect(models).toEqual([]);
-      expect(logger.error).toHaveBeenCalled();
+      expect(config.logger.error).toHaveBeenCalled();
     });
 
     it('should return an empty array if no baseURL is provided', async () => {

@@ -1,7 +1,7 @@
 const path = require('path');
 const winston = require('winston');
 require('winston-daily-rotate-file');
-const { redactFormat, debugTraverse } = require('./parsers');
+const { redactFormat, redactMessage, debugTraverse } = require('./parsers');
 
 const logDir = path.join(__dirname, '..', 'logs');
 const basePath = path.resolve(__dirname, '..');
@@ -29,10 +29,9 @@ const levels = {
 
 function wrapLogMethod(originalMethod) {
   return function (message, ...args) {
-    const err = args.find((arg) => arg instanceof Error);
-    const stack = err ? err.stack : new Error().stack;
-    const stackLines = stack.split('\n');
-    let relevantStack = stackLines[2] || stackLines[1]; // Fallback to an earlier stack if needed
+    const err = new Error();
+    const stack = err.stack.split('\n');
+    let relevantStack = stack[2] || stack[1]; // Fallback to an earlier stack if needed
     // Adjusted regex to optionally match function calls in parentheses
     let match = relevantStack
       ? /at\s+(?:.*?\s+)?\(?([^)]+):(\d+):(\d+)\)?/.exec(relevantStack)
@@ -79,12 +78,14 @@ const fileFormat = winston.format.combine(
 );
 
 const consoleFormat = winston.format.combine(
+  redactFormat(),
   winston.format.colorize({ all: true }),
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+  // redactErrors(),
   winston.format.printf((info) => {
-    let message = `${info.timestamp} ${info.level}: ${info.message}`;
+    const message = `${info.timestamp} ${info.level}: ${info.message}`;
     if (info.level.includes('error')) {
-      message += `\nStack Trace: ${info.stack}`;
+      return redactMessage(message);
     }
 
     return message;
