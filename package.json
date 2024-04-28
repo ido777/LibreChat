@@ -7,6 +7,11 @@
     "client",
     "packages/*"
   ],
+  "overrides": {
+    "vite": {
+      "rollup": "4.15.0"
+    }
+  },
   "scripts": {
     "update": "node config/update.js",
     "add-balance": "node config/add-balance.js",
@@ -100,5 +105,9 @@
       "admin/",
       "packages/"
     ]
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.1.16",
+    "@langchain/community": "^0.0.53"
   }
 }
