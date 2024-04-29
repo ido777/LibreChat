@@ -9,9 +9,14 @@ const { getAzureCredentials } = require('~/utils');
 const { PluginsClient, AnthropicPluginsClient } = require('~/app');
 
 const initializeClient = async ({ req, res, endpointOption }) => {
-  const modelName = endpointOption.modelOptions.model;
-  // TODO: check why we need to models to endpointOption
-  endpointOption.agentOptions.model = endpointOption.modelOptions.model;
+  let modelName = null;
+  if (endpointOption.modelOptions) {
+    modelName = endpointOption.modelOptions.model;
+  }
+  // TODO: check why we need two models to endpointOption, one as modelOptions.model and one as agentOptions.model
+  if (endpointOption.agentOptions) {
+    endpointOption.agentOptions.model = modelName;
+  }
   // Determine the model family based on the model name or other logic
   const modelFamily = determineModelFamily(modelName);
   switch (modelFamily) {
@@ -26,7 +31,7 @@ const initializeClient = async ({ req, res, endpointOption }) => {
 };
 
 const determineModelFamily = (modelName) => {
-  if (modelName.startsWith('claude-3')) {
+  if (modelName && modelName.startsWith('claude-3')) {
     return 'anthropic';
   } else {
     return 'openai';
