@@ -65,7 +65,7 @@ const createStartHandler = ({
             debug: manager.debug,
             generations,
             model,
-            // endpoint: EModelEndpoint.openAI,
+            endpoint: EModelEndpoint.openAI,
           },
         });
       }

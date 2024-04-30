@@ -48,7 +48,7 @@ const initializeFunctionsAgent = async ({
   }
 
   return await initializeAgentExecutorWithOptions(tools, model, {
-    agentType: 'chat-conversational-react-description', // 'openai-functions',
+    agentType: 'openai-functions',
     memory,
     ...rest,
     agentArgs: {
