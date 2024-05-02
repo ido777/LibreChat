@@ -6,6 +6,7 @@ const {
 const { getUserKeyValues, checkUserKeyExpiry } = require('~/server/services/UserService');
 const { isEnabled, isUserProvided } = require('~/server/utils');
 const { getAzureCredentials } = require('~/utils');
+const { determineModelFamily } = require('~/app/clients/tools/util');
 const { PluginsClient, AnthropicPluginsClient } = require('~/app');
 
 const initializeClient = async ({ req, res, endpointOption }) => {
@@ -27,14 +28,6 @@ const initializeClient = async ({ req, res, endpointOption }) => {
 
     default:
       throw new Error('Unsupported model family', modelFamily);
-  }
-};
-
-const determineModelFamily = (modelName) => {
-  if (modelName && modelName.startsWith('claude-3')) {
-    return 'anthropic';
-  } else {
-    return 'openai';
   }
 };
 
@@ -182,4 +175,4 @@ const initializeOpenAiClient = async ({ req, res, endpointOption }) => {
   };
 };
 
-module.exports = initializeClient;
+module.exports = { initializeClient };

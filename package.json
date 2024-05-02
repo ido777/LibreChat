@@ -108,6 +108,8 @@
   },
   "dependencies": {
     "@langchain/anthropic": "^0.1.16",
-    "@langchain/community": "^0.0.53"
+    "@langchain/community": "^0.0.53",
+    "@langchain/openai": "^0.0.28",
+    "langchain": "^0.1.36"
   }
 }

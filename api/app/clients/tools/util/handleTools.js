@@ -1,7 +1,8 @@
 const { ZapierToolKit } = require('langchain/agents');
 const { Calculator } = require('langchain/tools/calculator');
 const { WebBrowser } = require('langchain/tools/webbrowser');
-const { SerpAPI, ZapierNLAWrapper } = require('langchain/tools');
+const { SerpAPI } = require('@langchain/community/tools/serpapi');
+const { ZapierNLAWrapper } = require('langchain/tools');
 const { OpenAIEmbeddings } = require('langchain/embeddings/openai');
 const { getUserPluginAuthValue } = require('~/server/services/PluginService');
 const {

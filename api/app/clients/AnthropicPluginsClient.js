@@ -128,6 +128,18 @@ class AnthropicPluginsClient extends AnthropicClient {
         callback(action, runId);
       }
     };
+    // https://js.langchain.com/docs/modules/agents/agent_types/tool_calling
+    // TODO: now we need to do
+    // const agent = await createToolCallingAgent({
+    //   llm,
+    //   tools: [currentWeatherTool],
+    //   prompt,
+    // });
+
+    // const agentExecutor = new AgentExecutor({
+    //   agent,
+    //   tools: [currentWeatherTool],
+    // });
 
     // initialize agent
     const initializer = this.functionsAgent ? initializeFunctionsAgent : initializeCustomAgent;

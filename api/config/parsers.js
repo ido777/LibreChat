@@ -110,6 +110,11 @@ const condenseArray = (item) => {
  * @returns {string} - The formatted log message.
  */
 const debugTraverse = winston.format.printf(({ level, message, timestamp, ...metadata }) => {
+  let format = false;
+  if (!format) {
+    let msg = `${timestamp} ${level}: ${message} (metadata: ${JSON.stringify(metadata)})`;
+    return msg;
+  }
   let msg = `${timestamp} ${level}: ${truncateLongStrings(message?.trim(), 150)}`;
   try {
     if (level !== 'debug') {

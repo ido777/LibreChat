@@ -737,18 +737,6 @@ class AnthropicClient extends BaseClient {
     return llm;
   }
 
-  // TODO: now we need to do
-  // const agent = await createToolCallingAgent({
-  //   llm,
-  //   tools: [currentWeatherTool],
-  //   prompt,
-  // });
-
-  // const agentExecutor = new AgentExecutor({
-  //   agent,
-  //   tools: [currentWeatherTool],
-  // });
-
   /**
    * Generates a concise title for a conversation based on the user's input text and response.
    * Involves sending a chat completion request with specific instructions for title generation.
