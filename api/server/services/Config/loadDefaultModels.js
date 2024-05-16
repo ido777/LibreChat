@@ -5,6 +5,7 @@ const {
   getGoogleModels,
   getAnthropicModels,
   getChatGPTBrowserModels,
+  getPluginModels,
 } = require('~/server/services/ModelService');
 
 /**
@@ -19,7 +20,7 @@ async function loadDefaultModels(req) {
   const anthropic = getAnthropicModels();
   const chatGPTBrowser = getChatGPTBrowserModels();
   const azureOpenAI = await getOpenAIModels({ user: req.user.id, azure: true });
-  const gptPlugins = await getOpenAIModels({
+  const gptPlugins = await getPluginModels({
     user: req.user.id,
     azure: useAzurePlugins,
     plugins: true,

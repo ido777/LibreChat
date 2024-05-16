@@ -1,10 +1,15 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const { ChatAnthropic } = require('@langchain/anthropic');
+// const { DynamicStructuredTool } = require('@langchain/core/tools');
+// const { AgentExecutor, createToolCallingAgent } = require('langchain/agents');
+
+// const { ChatPromptTemplate } = require('@langchain/core/prompts');
 const { encoding_for_model: encodingForModel, get_encoding: getEncoding } = require('tiktoken');
 const {
   getResponseSender,
   EModelEndpoint,
   validateVisionModel,
 } = require('librechat-data-provider');
+const { RunManager } = require('./llm');
 const { encodeAndFormat } = require('~/server/services/Files/images/encode');
 const {
   truncateText,
@@ -61,8 +66,8 @@ class AnthropicClient extends BaseClient {
     this.modelOptions = {
       ...modelOptions,
       // set some good defaults (check for undefined in some cases because they may be 0)
-      model: modelOptions.model || 'claude-1',
-      temperature: typeof modelOptions.temperature === 'undefined' ? 1 : modelOptions.temperature, // 0 - 1, 1 is default
+      model: modelOptions.model || 'claude-3-haiku-20240307',
+      temperature: typeof modelOptions.temperature === 'undefined' ? 0 : modelOptions.temperature, // 0 - 1, 1 is default
       topP: typeof modelOptions.topP === 'undefined' ? 0.7 : modelOptions.topP, // 0 - 1, default: 0.7
       topK: typeof modelOptions.topK === 'undefined' ? 40 : modelOptions.topK, // 1-40, default: 40
       stop: modelOptions.stop, // no stop method for now
@@ -130,7 +135,7 @@ class AnthropicClient extends BaseClient {
       options.baseURL = this.options.reverseProxyUrl;
     }
 
-    return new Anthropic(options);
+    return new ChatAnthropic(options);
   }
 
   getTokenCountForResponse(response) {
@@ -242,10 +247,7 @@ class AnthropicClient extends BaseClient {
 
     const formattedMessages = orderedMessages.map((message, i) => {
       const formattedMessage = this.useMessages
-        ? formatMessage({
-          message,
-          endpoint: EModelEndpoint.anthropic,
-        })
+        ? formatMessage({ message, endpoint: EModelEndpoint.anthropic })
         : {
           author: message.isCreatedByUser ? this.userLabel : this.assistantLabel,
           content: message?.content ?? message.text,
@@ -686,6 +688,72 @@ class AnthropicClient extends BaseClient {
   getTokenCount(text) {
     return this.gptEncoder.encode(text, 'all').length;
   }
+
+  initializeLLM({
+    model = 'claude-3-haiku-20240307',
+    modelName,
+    temperature = 0.2,
+    presence_penalty = 0,
+    frequency_penalty = 0,
+    max_tokens,
+    streaming,
+    context,
+    tokenBuffer,
+    initialMessageCount,
+    conversationId,
+  }) {
+    const modelOptions = {
+      modelName: modelName ?? model,
+      temperature,
+      presence_penalty,
+      frequency_penalty,
+      user: this.user,
+    };
+
+    if (max_tokens) {
+      modelOptions.max_tokens = max_tokens;
+    }
+
+    const configOptions = {};
+
+    if (this.langchainProxy) {
+      configOptions.basePath = this.langchainProxy;
+    }
+
+    const { req, res, debug } = this.options;
+    const runManager = new RunManager({ req, res, debug, abortController: this.abortController });
+    this.runManager = runManager;
+
+    // see https://js.langchain.com/docs/integrations/chat/anthropic#tools
+    const llm = new ChatAnthropic({
+      modelOptions,
+      configOptions,
+      apiKey: this.apiKey,
+      anthropicApiKey: this.apiKey,
+      model: modelOptions.modelName,
+      streaming,
+      callbacks: runManager.createCallbacks({
+        context,
+        tokenBuffer,
+        conversationId: this.conversationId ?? conversationId,
+        initialMessageCount,
+      }),
+    });
+
+    return llm;
+  }
+
+  // TODO: now we need to do
+  // const agent = await createToolCallingAgent({
+  //   llm,
+  //   tools: [currentWeatherTool],
+  //   prompt,
+  // });
+
+  // const agentExecutor = new AgentExecutor({
+  //   agent,
+  //   tools: [currentWeatherTool],
+  // });
 
   /**
    * Generates a concise title for a conversation based on the user's input text and response.

@@ -69,6 +69,12 @@ async function getSpec(url) {
     return await response.json();
   }
 
+  if (RegularUrl.parse(url) && path.extname(url) === '.yaml') {
+    const response = await fetch(url);
+    const text = await response.text();
+    return yaml.load(text);
+  }
+
   const ValidSpecPath = z
     .string()
     .url()
