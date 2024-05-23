@@ -6,6 +6,8 @@ meili_data*
 data/
 logs
 *.log
+*.bak
+
 
 # Runtime data
 pids

@@ -418,6 +418,7 @@ const fitlerAssistantModels = (str: string) => {
 };
 
 const openAIModels = defaultModels[EModelEndpoint.openAI];
+// const anthropicModels = defaultModels[EModelEndpoint.anthropic];
 
 export const initialModelsConfig: TModelsConfig = {
   initial: [],

@@ -34,11 +34,7 @@ const fetchModels = async ({
 }) => {
   let models = [];
 
-  if (!baseURL && !azure) {
-    return models;
-  }
-
-  if (!apiKey) {
+  if ((!baseURL && !azure) || !apiKey) {
     return models;
   }
 
@@ -80,6 +76,7 @@ const fetchModels = async ({
   } catch (error) {
     const logMessage = `Failed to fetch models from ${azure ? 'Azure ' : ''}${name} API`;
     logAxiosError({ message: logMessage, error });
+    return models;
   }
 
   return models;
@@ -203,6 +200,24 @@ const getOpenAIModels = async (opts) => {
   return await fetchOpenAIModels(opts, models);
 };
 
+const getPluginModels = async (opts) => {
+  let allModels = [];
+
+  // OpenAI
+  const openAIModels = await getOpenAIModels({ ...opts, plugins: true });
+
+  // Google
+  const googleModels = getGoogleModels({ ...opts, plugins: true });
+
+  // Anthropic
+  const anthropicModels = getAnthropicModels({ ...opts, plugins: true });
+
+  // Combine all models that support plugins
+  allModels = [...openAIModels, ...googleModels, ...anthropicModels];
+
+  return allModels;
+};
+
 const getChatGPTBrowserModels = () => {
   let models = ['text-davinci-002-render-sha', 'gpt-4'];
   if (process.env.CHATGPT_MODELS) {
@@ -212,8 +227,12 @@ const getChatGPTBrowserModels = () => {
   return models;
 };
 
-const getAnthropicModels = () => {
+const getAnthropicModels = (opts) => {
   let models = defaultModels[EModelEndpoint.anthropic];
+  if (opts && opts.plugins) {
+    const regex = /^claude-3/;
+    models = models.filter((model) => regex.test(model));
+  }
   if (process.env.ANTHROPIC_MODELS) {
     models = String(process.env.ANTHROPIC_MODELS).split(',');
   }
@@ -221,7 +240,11 @@ const getAnthropicModels = () => {
   return models;
 };
 
-const getGoogleModels = () => {
+const getGoogleModels = (opts) => {
+  if (opts && opts.plugins) {
+    // Return empty if Google does not support plugins
+    return [];
+  }
   let models = defaultModels[EModelEndpoint.google];
   if (process.env.GOOGLE_MODELS) {
     models = String(process.env.GOOGLE_MODELS).split(',');
@@ -236,4 +259,5 @@ module.exports = {
   getChatGPTBrowserModels,
   getAnthropicModels,
   getGoogleModels,
+  getPluginModels,
 };
