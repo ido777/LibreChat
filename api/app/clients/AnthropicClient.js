@@ -1,8 +1,4 @@
 const { ChatAnthropic } = require('@langchain/anthropic');
-// const { DynamicStructuredTool } = require('@langchain/core/tools');
-// const { AgentExecutor, createToolCallingAgent } = require('langchain/agents');
-
-// const { ChatPromptTemplate } = require('@langchain/core/prompts');
 const { encoding_for_model: encodingForModel, get_encoding: getEncoding } = require('tiktoken');
 const {
   getResponseSender,
@@ -116,7 +112,7 @@ class AnthropicClient extends BaseClient {
         stopTokens.push(this.endToken);
       }
       stopTokens.push(`${this.userLabel}`);
-      stopTokens.push('<|diff_marker|>');
+      stopTokens.push('');
 
       this.modelOptions.stop = stopTokens;
     }
@@ -537,6 +533,9 @@ class AnthropicClient extends BaseClient {
    * @returns {Promise<Anthropic.default.Message | Anthropic.default.Completion>} The response from the Anthropic client.
    */
   async createResponse(client, options, useMessages) {
+    if (!client || !client.messages || !client.completions) {
+      throw new Error('Anthropic client is not initialized correctly', client);
+    }
     return useMessages ?? this.useMessages
       ? await client.messages.create(options)
       : await client.completions.create(options);
@@ -745,18 +744,6 @@ class AnthropicClient extends BaseClient {
 
     return llm;
   }
-
-  // TODO: now we need to do
-  // const agent = await createToolCallingAgent({
-  //   llm,
-  //   tools: [currentWeatherTool],
-  //   prompt,
-  // });
-
-  // const agentExecutor = new AgentExecutor({
-  //   agent,
-  //   tools: [currentWeatherTool],
-  // });
 
   /**
    * Generates a concise title for a conversation based on the user's input text and response.

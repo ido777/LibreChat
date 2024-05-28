@@ -42,12 +42,8 @@ class PluginsClient extends OpenAIClient {
     return {
       chatGptLabel: this.options.chatGptLabel,
       promptPrefix: this.options.promptPrefix,
-      tools: this.options.tools,
       ...this.modelOptions,
       agentOptions: this.agentOptions,
-      iconURL: this.options.iconURL,
-      greeting: this.options.greeting,
-      spec: this.options.spec,
     };
   }
 
@@ -148,11 +144,9 @@ class PluginsClient extends OpenAIClient {
       signal,
       pastMessages,
       tools: this.tools,
+      currentDateString: this.currentDateString,
       verbose: this.options.debug,
       returnIntermediateSteps: true,
-      customName: this.options.chatGptLabel,
-      currentDateString: this.currentDateString,
-      customInstructions: this.options.promptPrefix,
       callbackManager: CallbackManager.fromHandlers({
         async handleAgentAction(action, runId) {
           handleAction(action, runId, onAgentAction);
@@ -243,14 +237,14 @@ class PluginsClient extends OpenAIClient {
     return { ...responseMessage, ...result };
   }
 
-  async sendMessage(message, opts = {}) {
+  async sendMessage(humanMessage, opts = {}) {
     // If a message is edited, no tools can be used.
     const completionMode = this.options.tools.length === 0 || opts.isEdited;
     if (completionMode) {
       this.setOptions(opts);
-      return super.sendMessage(message, opts);
+      return super.sendMessage(humanMessage, opts);
     }
-    logger.debug('[PluginsClient] sendMessage', { userMessageText: message, opts });
+    logger.debug('[PluginsClient] sendMessage', { humanMessage, opts });
     const {
       user,
       isEdited,
@@ -262,7 +256,7 @@ class PluginsClient extends OpenAIClient {
       onChainEnd,
       onToolStart,
       onToolEnd,
-    } = await this.handleStartMethods(message, opts);
+    } = await this.handleStartMethods(humanMessage, opts);
 
     this.currentMessages.push(userMessage);
 
@@ -310,8 +304,6 @@ class PluginsClient extends OpenAIClient {
     }
 
     const responseMessage = {
-      endpoint: EModelEndpoint.gptPlugins,
-      iconURL: this.options.iconURL,
       messageId: responseMessageId,
       conversationId,
       parentMessageId: userMessage.messageId,
@@ -324,7 +316,7 @@ class PluginsClient extends OpenAIClient {
 
     await this.initialize({
       user,
-      message,
+      humanMessage,
       onAgentAction,
       onChainEnd,
       signal: this.abortController.signal,
@@ -334,7 +326,7 @@ class PluginsClient extends OpenAIClient {
     // const stream = async (text) => {
     //   await this.generateTextStream.call(this, text, opts.onProgress, { delay: 1 });
     // };
-    await this.executorCall(message, {
+    await this.executorCall(humanMessage, {
       signal: this.abortController.signal,
       // stream,
       onToolStart,
@@ -375,7 +367,7 @@ class PluginsClient extends OpenAIClient {
 
     const promptPrefix = buildPromptPrefix({
       result: this.result,
-      message,
+      humanMessage,
       functionsAgent: this.functionsAgent,
     });
 
