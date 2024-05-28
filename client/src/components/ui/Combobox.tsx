@@ -1,4 +1,4 @@
-import { startTransition, useMemo } from 'react';
+import { startTransition, useMemo, useEffect, useState } from 'react';
 import { Search as SearchIcon } from 'lucide-react';
 import * as RadixSelect from '@radix-ui/react-select';
 import { CheckIcon, ChevronDownIcon } from '@radix-ui/react-icons';
@@ -134,30 +134,39 @@ export default function ComboboxComponent({
                 />
               </div>
               <ComboboxList className="overflow-y-auto p-1 py-2">
-                {matches.map(({ label, value, icon }) => (
-                  <RadixSelect.Item key={value} value={`${value ?? ''}`} asChild>
-                    <ComboboxItem
-                      className={cn(
-                        'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-                        'rounded-lg hover:bg-gray-100/50 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-600',
-                      )}
-                    >
-                      <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
-                        <RadixSelect.ItemIndicator>
-                          <CheckIcon className="h-4 w-4" />
-                        </RadixSelect.ItemIndicator>
-                      </span>
-                      <RadixSelect.ItemText>
-                        <div className="[&_svg]:text-foreground flex items-center justify-center gap-3 dark:text-white [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0">
-                          <div className="assistant-item overflow-hidden rounded-full ">
-                            {icon && icon}
-                          </div>
-                          {label}
-                        </div>
-                      </RadixSelect.ItemText>
-                    </ComboboxItem>
-                  </RadixSelect.Item>
-                ))}
+                {matches
+                  .filter(({ value }) => value !== '')
+                  .map(({ label, value, icon }) => {
+                    const itemValue = `${value ?? 'missing_value'}`;
+                    console.log('Assigned value for RadixSelect.Item:', {
+                      label,
+                      itemValue,
+                    });
+                    return (
+                      <RadixSelect.Item key={itemValue} value={itemValue} asChild>
+                        <ComboboxItem
+                          className={cn(
+                            'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+                            'rounded-lg hover:bg-gray-100/50 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-600',
+                          )}
+                        >
+                          <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                            <RadixSelect.ItemIndicator>
+                              <CheckIcon className="h-4 w-4" />
+                            </RadixSelect.ItemIndicator>
+                          </span>
+                          <RadixSelect.ItemText>
+                            <div className="[&_svg]:text-foreground flex items-center justify-center gap-3 dark:text-white [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0">
+                              <div className="assistant-item overflow-hidden rounded-full ">
+                                {icon && icon}
+                              </div>
+                              {label}
+                            </div>
+                          </RadixSelect.ItemText>
+                        </ComboboxItem>
+                      </RadixSelect.Item>
+                    );
+                  })}
               </ComboboxList>
             </RadixSelect.Viewport>
             <SelectScrollDownButton className="absolute bottom-0 left-0 right-0" />

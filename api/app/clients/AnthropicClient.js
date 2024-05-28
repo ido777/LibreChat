@@ -66,7 +66,10 @@ class AnthropicClient extends BaseClient {
     this.modelOptions = {
       ...modelOptions,
       // set some good defaults (check for undefined in some cases because they may be 0)
-      model: modelOptions.model || 'claude-3-haiku-20240307',
+      model:
+        modelOptions.model && modelOptions.model !== ''
+          ? modelOptions.model
+          : 'claude-3-haiku-20240307',
       temperature: typeof modelOptions.temperature === 'undefined' ? 0 : modelOptions.temperature, // 0 - 1, 1 is default
       topP: typeof modelOptions.topP === 'undefined' ? 0.7 : modelOptions.topP, // 0 - 1, default: 0.7
       topK: typeof modelOptions.topK === 'undefined' ? 40 : modelOptions.topK, // 1-40, default: 40
